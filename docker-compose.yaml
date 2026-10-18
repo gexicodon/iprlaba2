@@ -1,0 +1,36 @@
+services:
+  frontend:
+    build: .
+    image: gexicodon/frontend:latest
+    container_name: frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - internal
+
+  api:
+    image: containous/whoami
+    container_name: api
+    networks:
+      - internal
+
+  logger:
+    image: busybox
+    container_name: logger
+    command: >
+      sh -c "while true; do
+        echo \"$(date '+%Y-%m-%d %H:%M:%S') logger event\" >> /data/log.txt;
+        sleep 5;
+      done"
+    volumes:
+      - logger-data:/data
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  logger-data:
